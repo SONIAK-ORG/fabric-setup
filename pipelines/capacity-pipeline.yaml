@@ -1,0 +1,28 @@
+trigger:
+  branches:
+    include:
+      - main
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Fabric Accelerator Pod/fabric-management-templates
+
+parameters:
+  - name: terraform_action
+    displayName: Terraform Action to perform
+    type: string
+    default: 'apply'
+    values:
+      - 'apply'
+      - 'destroy'
+
+lockBehavior: sequential
+
+extends:
+  template: .pipelines/cd-template.yaml@templates
+  parameters:
+    terraform_action: ${{ parameters.terraform_action }}
+    root_module_folder_relative_path: .
+    # You can add additional parameters or overrides specific to the capacity pipeline here

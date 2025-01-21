@@ -1,0 +1,30 @@
+trigger: none  # Disable direct triggers; rely solely on capacity pipeline trigger
+
+resources:
+  pipelines:
+    - pipeline: capacityPipeline   # Alias for the capacity pipeline resource
+      source: capacity-pipeline    # The name of the capacity pipeline in Azure DevOps
+      trigger:
+        branches:
+          include:
+            - main                 # Trigger when the capacity pipeline finishes on the main branch
+
+parameters:
+  - name: terraform_action
+    displayName: Terraform Action to perform
+    type: string
+    default: 'apply'
+    values:
+      - 'apply'
+      - 'destroy'
+
+lockBehavior: sequential
+
+extends:
+  template: .pipelines/cd-template.yaml@templates
+  parameters:
+    terraform_action: ${{ parameters.terraform_action }}
+    root_module_folder_relative_path: .
+    variable_group: 'capacity-variable-group'
+
+    # Add any additional parameters or overrides as needed
