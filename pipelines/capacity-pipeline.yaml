@@ -21,8 +21,8 @@ parameters:
 lockBehavior: sequential
 
 extends:
-  template: .pipelines/cd-template.yaml@templates
+  template: .pipelines/cd-template.yaml
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
-    root_module_folder_relative_path: .
+    root_module_folder_relative_path: "./modules/capacity"
     # You can add additional parameters or overrides specific to the capacity pipeline here

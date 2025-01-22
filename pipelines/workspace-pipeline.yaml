@@ -21,10 +21,10 @@ parameters:
 lockBehavior: sequential
 
 extends:
-  template: .pipelines/cd-template.yaml@templates
+  template: .pipelines/cd-template.yaml
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
-    root_module_folder_relative_path: .
+    root_module_folder_relative_path: "./modules/workspace"
     variable_group: 'capacity-variable-group'
 
     # Add any additional parameters or overrides as needed

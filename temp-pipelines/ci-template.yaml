@@ -1,0 +1,67 @@
+---
+parameters:
+  - name: root_module_folder_relative_path
+    default: '.'
+  - name: variable_group  # Add support for variable_group parameter
+    type: string
+    default: 'fabric-mggmt'
+
+stages:
+  - stage: validate
+    displayName: Validation Terraform
+    variables:
+      - name: 'selfHostedAgent'
+        value: 'false'
+    jobs:
+      - job: validate
+        displayName: Validate Terraform
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - template: temp-pipeline/helpers/terraform-installer.yaml
+            parameters:
+              terraformVersion: 'latest'
+          - pwsh: |
+              terraform `
+              -chdir="${{ parameters.root_module_folder_relative_path }}" `
+              fmt `
+              -check
+            displayName: Terraform Format Check
+          - pwsh: |
+              terraform `
+              -chdir="${{ parameters.root_module_folder_relative_path }}" `
+              init `
+              -backend=false
+            displayName: Terraform Init
+          - pwsh: |
+              terraform `
+              -chdir="${{ parameters.root_module_folder_relative_path }}" `
+              validate
+            displayName: Terraform Validate
+      - deployment: plan
+        dependsOn: validate
+        displayName: Validate Terraform Plan
+        pool:
+          vmImage: ubuntu-latest
+        environment: fabric-management-plan
+        timeoutInMinutes: 0
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: Checkout Terraform Module
+                - template: temp-pipeline/helpers/terraform-installer.yaml
+                  parameters:
+                    terraformVersion: 'latest'
+                - template: temp-pipeline/helpers/terraform-init.yaml
+                  parameters:
+                    serviceConnection: 'sc-fabric-management-plan'
+                    backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
+                    backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
+                    backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
+                - template: temp-pipeline/helpers/terraform-plan.yaml
+                  parameters:
+                    serviceConnection: 'sc-fabric-management-plan'
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}

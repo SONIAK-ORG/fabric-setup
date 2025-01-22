@@ -1,0 +1,112 @@
+---
+parameters:
+  - name: terraform_action
+    default: 'apply'
+  - name: root_module_folder_relative_path
+    default: '.'
+  - name: variable_group  # Add support for variable_group parameter
+    type: string
+    default: 'fabric-mggmt'
+
+stages:
+  - stage: plan
+    displayName: Plan
+    variables:
+      - group: fabric-mggmt
+      - name: 'selfHostedAgent'
+        value: 'false'
+    jobs:
+      - deployment: plan
+        displayName: Plan with Terraform
+        pool:
+          vmImage: ubuntu-latest
+        environment: fabric-management-plan
+        timeoutInMinutes: 0
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: Checkout Terraform Module
+                - template: temp-pipeline/helpers/terraform-installer.yaml
+                  parameters:
+                    terraformVersion: 'latest'
+                - template: temp-pipeline/helpers/terraform-init.yaml
+                  parameters:
+                    serviceConnection: 'sc-fabric-management-plan'
+                    backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
+                    backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
+                    backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
+                - template: temp-pipeline/helpers/terraform-plan.yaml
+                  parameters:
+                    terraform_action: ${{ parameters.terraform_action }}
+                    serviceConnection: 'sc-fabric-management-plan'
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
+                - task: CopyFiles@2
+                  displayName: Create Module Artifact
+                  inputs:
+                    SourceFolder: '$(Build.SourcesDirectory)'
+                    Contents: |
+                      **/*
+                      !.terraform/**/*
+                      !.git/**/*
+                      !.pipelines/**/*
+                      !**/.terraform/**/*
+                      !**/.git/**/*
+                      !**/.pipelines/**/*
+                    TargetFolder: '$(Build.ArtifactsStagingDirectory)'
+                    CleanTargetFolder: true
+                    OverWrite: true
+                - task: PublishPipelineArtifact@1
+                  displayName: Publish Module Artifact
+                  inputs:
+                    targetPath: '$(Build.ArtifactsStagingDirectory)'
+                    artifact: 'module'
+                    publishLocation: 'pipeline'
+                - pwsh: |
+                    terraform `
+                    -chdir="${{ parameters.root_module_folder_relative_path }}" `
+                    show `
+                    tfplan
+                  displayName: Show the Plan for Review
+  - stage: apply
+    displayName: Apply
+    dependsOn: plan
+    variables:
+      - group: fabric-mggmt
+      - name: 'selfHostedAgent'
+        value: 'false'
+    jobs:
+      - deployment: apply
+        displayName: Apply with Terraform
+        pool:
+          vmImage: ubuntu-latest
+        environment: fabric-management-apply
+        timeoutInMinutes: 0
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download Module Artifact
+                  inputs:
+                    buildType: 'current'
+                    artifactName: 'module'
+                    targetPath: '$(Build.SourcesDirectory)'
+                - template: temp-pipeline/helpers/terraform-installer.yaml
+                  parameters:
+                    terraformVersion: 'latest'
+                - template: temp-pipeline/helpers/terraform-init.yaml
+                  parameters:
+                    serviceConnection: 'sc-fabric-management-apply'
+                    backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
+                    backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
+                    backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
+                - template: temp-pipeline/helpers/terraform-apply.yaml
+                  parameters:
+                    terraform_action: ${{ parameters.terraform_action }}
+                    serviceConnection: 'sc-fabric-management-apply'
+                    root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
