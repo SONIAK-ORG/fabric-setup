@@ -8,11 +8,26 @@ locals {
 }
 
 module "capacity" {
-  source     = "./modules/capacity"
+  source     = "./module/capacity"
   capacities = local.capacities
+
+  # Explicitly pass providers if needed (optional)
+  providers = {
+    azapi   = azapi
+    fabric  = fabric
+  }
 }
 
 module "workspace" {
-  source     = "./modules/workspace"
+  source     = "./module/workspace"
   workspaces = local.workspaces
+
+  # Explicitly pass providers if needed (optional)
+  providers = {
+    azurerm = azurerm
+    azapi   = azapi
+  }
 }
+
+
+

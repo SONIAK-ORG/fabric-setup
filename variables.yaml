@@ -1,0 +1,19 @@
+capacities:
+  capacity1:
+    name: "my-fabric-capacity-1"
+    location: "eastus"
+    resource_group_name: "gmsadummy"
+    administration:
+      members:
+        - "user1@example.com"
+    sku:
+      name: "F2"
+      tier: "Fabric"
+    tags:
+      environment: "production"
+
+workspaces:
+  workspace1:
+    name: my-workspace
+    capacity_id: my-capacity
+
