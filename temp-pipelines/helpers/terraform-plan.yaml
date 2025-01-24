@@ -46,3 +46,15 @@ steps:
 
     env:
       TERRAFORM_ACTION: ${{ coalesce(parameters.terraform_action, 'apply') }}
+
+
+
+
+
+
+
+
+
+
+
+

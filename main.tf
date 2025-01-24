@@ -18,16 +18,13 @@ module "capacity" {
   }
 }
 
-module "workspace" {
-  source     = "./module/workspace"
-  workspaces = local.workspaces
+// module "workspace" {
+//   source     = "./module/workspace"
+//   workspaces = local.workspaces
 
-  # Explicitly pass providers if needed (optional)
-  providers = {
-    azurerm = azurerm
-    azapi   = azapi
-  }
-}
-
-
-
+//   # Explicitly pass providers if needed (optional)
+//   providers = {
+//     azurerm = azurerm
+//     azapi   = azapi
+//   }
+// }

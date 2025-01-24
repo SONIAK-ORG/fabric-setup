@@ -2,12 +2,12 @@ trigger: none  # Disable direct triggers; rely solely on capacity pipeline trigg
 
 resources:
   pipelines:
-    - pipeline: capacityPipeline   # Alias for the capacity pipeline resource
-      source: capacity-pipeline    # The name of the capacity pipeline in Azure DevOps
+    - pipeline: capacityPipeline
+      source: capacity-pipeline          # Name of the capacity pipeline in Azure DevOps
       trigger:
         branches:
           include:
-            - main                 # Trigger when the capacity pipeline finishes on the main branch
+            - main                       # Trigger this pipeline when capacity-pipeline runs on main
 
 parameters:
   - name: terraform_action
@@ -21,10 +21,12 @@ parameters:
 lockBehavior: sequential
 
 extends:
-  template: .pipelines/cd-template.yaml
+  template: ../temp-pipelines/cd-template.yaml
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
-    root_module_folder_relative_path: "./modules/workspace"
-    variable_group: 'capacity-variable-group'
+    root_module_folder_relative_path: .
+    variable_group: 'vars-group-workspace'
 
     # Add any additional parameters or overrides as needed
+
+

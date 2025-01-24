@@ -17,8 +17,20 @@ terraform {
       version = "0.1.0-beta.7"
 
     }
+
+      
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 2.22.0" # Use the latest stable version
+    }
+  
+
   }
 }
+
+
+
+
 
 
 # Dynamically retrieve resource group IDs
@@ -39,7 +51,7 @@ resource "azapi_resource" "fab_capacity" {
   body = {
     properties = {
       administration = {
-        members = each.value.administration.members
+        members = concat(each.value.administration.members, [data.azuread_service_principal.current.id])
       }
     }
     sku = {

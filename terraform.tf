@@ -16,12 +16,7 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    resource_group_name  = "rg-alz-mggmt-state-uksouth-001"
-    storage_account_name = "stoalzmgguks001vnfd"
-    container_name       = "fabric-tfstate"
-    key                  = "terraform.tfstate"
-  }
+  backend "azurerm" {}
 }
 
 # Configure the Azure Resource Manager (azurerm) provider
