@@ -38,3 +38,4 @@ steps:
         $arguments += "tfplan"
         Write-Host "Running: $command $arguments"
         & $command $arguments
+
