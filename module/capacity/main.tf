@@ -1,46 +1,53 @@
-
 # Specify required providers
-    
 terraform {
   required_providers {
     azapi = {
       source  = "azure/azapi" # Ensure this matches the provider source in the root module
-      version = "~> 2.2.0" 
+      version = "~> 2.2.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm" # Ensure this matches the provider source in the root module
       version = "~> 4.16.0"
     }
+  }
 
-    fabric = {
-      source  = "microsoft/fabric"
-      version = "0.1.0-beta.7"
-
-    }
-
-      
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 2.22.0" # Use the latest stable version
-    }
-  
-
+  backend "azurerm" {
+    use_oidc = true
   }
 }
 
 
+provider "azurerm" {
+  features {}
+  use_oidc = true
+  use_cli = false
+  subscription_id = "229f8a90-d75b-41db-ae79-90cdc72a0d11"
+}
+
+provider "azapi" {
+  use_oidc = true
+  use_cli  = false
+}
 
 
 
+
+locals {
+  # Parse YAML file relative to this module
+  config = yamldecode(file("${path.module}/../../variables.yaml"))
+
+  # Safely extract capacities and workspaces maps, defaulting to empty maps if not found
+  capacities = try(local.config.capacities, {})
+}
 
 # Dynamically retrieve resource group IDs
 data "azurerm_resource_group" "fab" {
-  for_each = var.capacities
+  for_each = local.capacities
   name     = each.value.resource_group_name
 }
 
 resource "azapi_resource" "fab_capacity" {
-  for_each = var.capacities
+  for_each = local.capacities
 
   type                      = "Microsoft.Fabric/capacities@2022-07-01-preview"
   name                      = each.value.name
@@ -51,7 +58,7 @@ resource "azapi_resource" "fab_capacity" {
   body = {
     properties = {
       administration = {
-        members = concat(each.value.administration.members, [data.azuread_service_principal.current.id])
+        members = each.value.administration.members
       }
     }
     sku = {
@@ -62,5 +69,6 @@ resource "azapi_resource" "fab_capacity" {
 
   tags = each.value.tags
 }
+
 
  
