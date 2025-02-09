@@ -32,6 +32,9 @@ steps:
         $env:ARM_CLIENT_ID = $clientId
         $env:ARM_USE_AZUREAD = "true"
 
+        
+
+
         $arguments = @()
         $arguments += "-chdir=${{ parameters.root_module_folder_relative_path }}"
         $arguments += "init"
@@ -50,3 +53,4 @@ steps:
       BACKEND_AZURE_STORAGE_ACCOUNT_NAME: ${{ parameters.backendAzureStorageAccountName }}
       BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME: ${{ parameters.backendAzureStorageAccountContainerName }}
       BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_KEY_NAME: ${{ parameters.backendAzureStorageAccountContainerKeyName }}
+      FABRIC_USE_OIDC: true
