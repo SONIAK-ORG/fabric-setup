@@ -1,7 +1,4 @@
-trigger:
-  branches:
-    include:
-      - main
+trigger: none
 
 resources:
   repositories:
@@ -24,6 +21,6 @@ extends:
   template: ../temp-pipelines/cd-template.yaml
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
-    root_module_folder_relative_path: .
+    root_module_folder_relative_path: $(Build.SourcesDirectory)/module/capacity
     variable_group: 'vars-group-capacity'
     # You can add additional parameters or overrides specific to the capacity pipeline here
