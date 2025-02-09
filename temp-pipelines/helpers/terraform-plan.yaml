@@ -1,11 +1,3 @@
----
-parameters:
-  - name: terraform_action
-    default: 'apply'
-  - name: serviceConnection
-  - name: root_module_folder_relative_path
-    default: '.'
-
 steps:
   - task: AzureCLI@2
     displayName: Terraform Plan for ${{ coalesce(parameters.terraform_action, 'Apply') }}
@@ -46,15 +38,4 @@ steps:
 
     env:
       TERRAFORM_ACTION: ${{ coalesce(parameters.terraform_action, 'apply') }}
-
-
-
-
-
-
-
-
-
-
-
-
+      FABRIC_USE_CLI: true
