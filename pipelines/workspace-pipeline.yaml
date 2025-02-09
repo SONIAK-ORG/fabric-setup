@@ -1,13 +1,6 @@
-trigger: none  # Disable direct triggers; rely solely on capacity pipeline trigger
+trigger: none 
 
-resources:
-  pipelines:
-    - pipeline: capacityPipeline
-      source: capacity-pipeline          # Name of the capacity pipeline in Azure DevOps
-      trigger:
-        branches:
-          include:
-            - main                       # Trigger this pipeline when capacity-pipeline runs on main
+
 
 parameters:
   - name: terraform_action
@@ -24,9 +17,7 @@ extends:
   template: ../temp-pipelines/cd-template.yaml
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
-    root_module_folder_relative_path: .
-    variable_group: 'vars-group-workspace'
+    root_module_folder_relative_path: $(Build.SourcesDirectory)/module/workspace
+    # variable_group: 'vars-group-workspace'
 
     # Add any additional parameters or overrides as needed
-
-
