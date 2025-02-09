@@ -120,7 +120,6 @@
 
 
 
-
 parameters:
   - name: terraform_action
     default: 'apply'
@@ -128,13 +127,13 @@ parameters:
     default: '.'
   - name: variable_group
     type: string
-    default: 'vars-group-capacity'
+    default: 'vars-group-workspace'
 
 stages:
   - stage: plan
     displayName: Plan
     variables:
-      - name: 'selfHostedAgent'
+      - name: 'vars-group-workspace'
         value: 'false'
       - group: ${{ parameters.variable_group }}
     jobs:
@@ -151,7 +150,8 @@ stages:
               terraformVersion: 'latest'
           - template: helpers/terraform-init.yaml
             parameters:
-              serviceConnection: 'sc-fabric-management-plan'
+              serviceConnection: 'Testing'
+
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
               backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
@@ -159,7 +159,8 @@ stages:
           - template: helpers/terraform-plan.yaml
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
-              serviceConnection: 'sc-fabric-management-plan'
+              serviceConnection: 'Testing'
+
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
           - task: CopyFiles@2
             displayName: Create Module Artifact
@@ -193,9 +194,9 @@ stages:
     displayName: Apply
     dependsOn: plan
     variables:
-      - group: fabric-mggmt
       - name: 'selfHostedAgent'
         value: 'false'
+      - group: ${{ parameters.variable_group }}
     jobs:
       - job: apply
         displayName: Apply with Terraform
@@ -215,7 +216,8 @@ stages:
               terraformVersion: 'latest'
           - template: helpers/terraform-init.yaml
             parameters:
-              serviceConnection: 'sc-fabric-management-apply'
+              serviceConnection: 'Testing'
+
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
               backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
@@ -223,5 +225,6 @@ stages:
           - template: helpers/terraform-apply.yaml
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
-              serviceConnection: 'sc-fabric-management-apply'
+              serviceConnection: 'Testing'
+
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
