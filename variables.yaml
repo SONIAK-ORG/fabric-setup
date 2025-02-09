@@ -1,11 +1,11 @@
 capacities:
   capacity1:
-    name: "my-fabric-capacity-1"
-    location: "eastus"
+    name: "capacityse14"
+    location: "uksouth"
     resource_group_name: "gmsadummy"
     administration:
       members:
-        - "user1@example.com"
+        - 9d7b302c-53f0-4684-acc1-129d1a99c3a5
     sku:
       name: "F2"
       tier: "Fabric"
@@ -15,5 +15,4 @@ capacities:
 workspaces:
   workspace1:
     name: my-workspace
-    capacity_id: my-capacity
-
+    capacity_id: "capacityse14"
