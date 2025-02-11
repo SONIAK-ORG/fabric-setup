@@ -1,15 +1,6 @@
 trigger: none 
 
 
-resources:
-  pipelines:
-    - pipeline: workspace  # Name of the first pipeline
-      source: workspace-pipeline.yaml  # The exact name of the first pipeline in Azure DevOps
-      trigger:
-        branches:
-          - main  # Adjust if needed (or remove if triggering on all branches)
-
-
 parameters:
   - name: terraform_action
     displayName: Terraform Action to perform
