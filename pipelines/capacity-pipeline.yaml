@@ -1,10 +1,5 @@
 trigger: none
 
-resources:
-  repositories:
-    - repository: templates
-      type: git
-      name: Fabric Accelerator Pod/fabric-management-templates
 
 parameters:
   - name: terraform_action
