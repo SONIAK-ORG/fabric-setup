@@ -22,5 +22,4 @@ extends:
   parameters:
     terraform_action: ${{ parameters.terraform_action }}
     root_module_folder_relative_path: $(Build.SourcesDirectory)/module/capacity
-    variable_group: 'vars-group-capacity'
-    # You can add additional parameters or overrides specific to the capacity pipeline here
+    variable_group: 'placeholder'
