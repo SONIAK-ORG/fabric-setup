@@ -18,3 +18,4 @@ extends:
     terraform_action: ${{ parameters.terraform_action }}
     root_module_folder_relative_path: $(Build.SourcesDirectory)/module/capacity
     variable_group: ''
+

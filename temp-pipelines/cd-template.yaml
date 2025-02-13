@@ -28,7 +28,7 @@ stages:
               terraformVersion: 'latest'
           - template: helpers/terraform-init.yaml
             parameters:
-              serviceConnection: ''
+              serviceConnection: 'fabric-service-connection'
 
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
@@ -37,7 +37,7 @@ stages:
           - template: helpers/terraform-plan.yaml
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
-              serviceConnection: ''
+              serviceConnection: 'fabric-service-connection'
 
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
           - task: CopyFiles@2
@@ -94,7 +94,7 @@ stages:
               terraformVersion: 'latest'
           - template: helpers/terraform-init.yaml
             parameters:
-              serviceConnection: ''
+              serviceConnection: 'fabric-service-connection'
 
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
@@ -103,7 +103,8 @@ stages:
           - template: helpers/terraform-apply.yaml
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
-              serviceConnection: ''
+              serviceConnection: 'fabric-service-connection'
 
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
+
 

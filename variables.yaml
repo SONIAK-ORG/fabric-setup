@@ -1,0 +1,24 @@
+capacities:
+- resource_group_name: fabric-fabric-rg
+  sku:
+    name: F2
+    tier: Fabric
+  name: capacityse14
+  key: capacity1
+  tags:
+    environment: production
+  administration:
+    members:
+    - 4dcf2a45-5da8-4c10-b8fa-d4d824a57d34
+  location: uksouth
+workspaces:
+- key: workspace1
+  name: my-workspace
+  capacity_id: capacityse14
+- key: workspace2
+  name: my-workspace-2
+  capacity_id: capacityse14
+- key: workspace3
+  name: my-workspace-3
+  capacity_id: capacityse14
+
