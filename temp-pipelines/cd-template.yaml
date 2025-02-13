@@ -29,7 +29,6 @@ stages:
           - template: helpers/terraform-init.yaml
             parameters:
               serviceConnection: 'fabric-service-connection'
-
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
               backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
@@ -38,7 +37,6 @@ stages:
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
               serviceConnection: 'fabric-service-connection'
-
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
           - task: CopyFiles@2
             displayName: Create Module Artifact
@@ -76,8 +74,21 @@ stages:
         value: 'false'
       - group: ${{ parameters.variable_group }}
     jobs:
+      - job: manual_validation
+        displayName: "User Action Required - Enable Service Principal Admin"
+        pool: server  # Manual validation does not require an agent
+        timeoutInMinutes: 10
+        steps:
+          - task: ManualValidation@0
+            displayName: "User Approval Required Before Apply"
+            inputs:
+              notifyUsers: "raaphael.boaateng-amponsah@kainos.com"
+              instructions: "Please enable Service Principal Admin in the Fabric portal. Wait 10 minutes before approving."
+              timeoutInMinutes: 10  # Wait up to 10 minutes for user approval
+
       - job: apply
         displayName: Apply with Terraform
+        dependsOn: manual_validation
         pool:
           vmImage: ubuntu-latest
         timeoutInMinutes: 0
@@ -95,7 +106,6 @@ stages:
           - template: helpers/terraform-init.yaml
             parameters:
               serviceConnection: 'fabric-service-connection'
-
               backendAzureResourceGroupName: $(BACKEND_AZURE_RESOURCE_GROUP_NAME)
               backendAzureStorageAccountName: $(BACKEND_AZURE_STORAGE_ACCOUNT_NAME)
               backendAzureStorageAccountContainerName: $(BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME)
@@ -104,7 +114,4 @@ stages:
             parameters:
               terraform_action: ${{ parameters.terraform_action }}
               serviceConnection: 'fabric-service-connection'
-
               root_module_folder_relative_path: ${{ parameters.root_module_folder_relative_path }}
-
-
