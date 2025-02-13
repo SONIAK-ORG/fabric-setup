@@ -10,6 +10,13 @@ parameters:
     default: '.'
 
 steps:
+  - task: ManualValidation@0
+    displayName: "User Action Required - Enable Service Principal Admin"
+    inputs:
+      notifyUsers: "raaphael.boaateng-amponsah@kainos.com"
+      instructions: "Please enable Service Principal Admin in the Fabric portal. Wait 10 minutes before approving."
+      timeoutInMinutes: 10  # Pipeline will wait 10 minutes for user approval
+
   - task: AzureCLI@2
     displayName: 'Terraform Init'
     inputs:
@@ -32,9 +39,6 @@ steps:
         $env:ARM_CLIENT_ID = $clientId
         $env:ARM_USE_AZUREAD = "true"
 
-        
-
-
         $arguments = @()
         $arguments += "-chdir=${{ parameters.root_module_folder_relative_path }}"
         $arguments += "init"
@@ -54,3 +58,4 @@ steps:
       BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME: ${{ parameters.backendAzureStorageAccountContainerName }}
       BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_KEY_NAME: ${{ parameters.backendAzureStorageAccountContainerKeyName }}
       FABRIC_USE_OIDC: true
+
