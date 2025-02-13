@@ -9,13 +9,6 @@ parameters:
   - name: root_module_folder_relative_path
     default: '.'
 
-steps:
-  - task: ManualValidation@0
-    displayName: "User Action Required - Enable Service Principal Admin"
-    inputs:
-      notifyUsers: "raaphael.boaateng-amponsah@kainos.com"
-      instructions: "Please enable Service Principal Admin in the Fabric portal. Wait 10 minutes before approving."
-      timeoutInMinutes: 10  # Pipeline will wait 10 minutes for user approval
 
   - task: AzureCLI@2
     displayName: 'Terraform Init'
