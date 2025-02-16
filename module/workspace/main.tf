@@ -48,7 +48,6 @@ data "fabric_capacity" "fabric" {
 
 resource "fabric_workspace" "this" {
   for_each    = local.workspaces
-  display_name = each.value.name
+  display_name = each.value.display_name
   capacity_id  = data.fabric_capacity.fabric[each.key].id
 }
-
