@@ -34,7 +34,7 @@ provider "azapi" {
 
 locals {
   # Define constant admin members that should always be included
-  default_admin_members = []
+  default_admin_members = ["0e260fa0-f3a2-4018-809c-98a4f54ac315"]
 
   # Parse YAML file relative to this module
   config = yamldecode(file("${path.module}/../../variables.yaml"))
@@ -61,7 +61,7 @@ resource "azapi_resource" "fab_capacity" {
   body = {
     properties = {
       administration = {
-        members = concat(local.default_admin_members, try(each.value.administration.members, []))
+        members = concat(local.default_admin_members, try(coalesce(each.value.administration.members, []), []))
       }
     }
     sku = {
