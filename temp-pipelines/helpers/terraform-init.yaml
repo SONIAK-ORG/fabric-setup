@@ -9,7 +9,7 @@ parameters:
   - name: root_module_folder_relative_path
     default: '.'
 
-
+steps:
   - task: AzureCLI@2
     displayName: 'Terraform Init'
     inputs:
