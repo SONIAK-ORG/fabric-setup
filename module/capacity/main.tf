@@ -33,10 +33,13 @@ provider "azapi" {
 
 
 locals {
+  # Define constant admin members that should always be included
+  default_admin_members = []
+
   # Parse YAML file relative to this module
   config = yamldecode(file("${path.module}/../../variables.yaml"))
 
-  # Safely extract capacities and workspaces maps, defaulting to empty maps if not found
+  # Safely extract capacities, defaulting to empty map
   capacities = try(local.config.capacities, {})
 }
 
@@ -50,7 +53,7 @@ resource "azapi_resource" "fab_capacity" {
   for_each = local.capacities
 
   type                      = "Microsoft.Fabric/capacities@2022-07-01-preview"
-  name                      = each.value.name
+  name                      = each.value.display_name
   parent_id                 = data.azurerm_resource_group.fab[each.key].id
   location                  = each.value.location
   schema_validation_enabled = false
@@ -58,7 +61,7 @@ resource "azapi_resource" "fab_capacity" {
   body = {
     properties = {
       administration = {
-        members = each.value.administration.members
+        members = concat(local.default_admin_members, try(each.value.administration.members, []))
       }
     }
     sku = {
@@ -69,6 +72,3 @@ resource "azapi_resource" "fab_capacity" {
 
   tags = each.value.tags
 }
-
-
- 
