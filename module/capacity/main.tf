@@ -34,7 +34,7 @@ provider "azapi" {
 
 locals {
   # Define constant admin members that should always be included
-  default_admin_members = ["0e260fa0-f3a2-4018-809c-98a4f54ac315"]
+  default_admin_members = []
 
   # Parse YAML file relative to this module
   config = yamldecode(file("${path.module}/../../variables.yaml"))
