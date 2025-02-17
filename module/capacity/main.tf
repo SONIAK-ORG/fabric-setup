@@ -53,7 +53,7 @@ resource "azapi_resource" "fab_capacity" {
   for_each = local.capacities
 
   type                      = "Microsoft.Fabric/capacities@2022-07-01-preview"
-  name                      = each.value.display_name
+  name                      = each.value.name
   parent_id                 = data.azurerm_resource_group.fab[each.key].id
   location                  = each.value.location
   schema_validation_enabled = false
