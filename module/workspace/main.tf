@@ -33,11 +33,8 @@ provider "fabric" {
 }
 
 locals {
-  # Parse YAML file relative to this module
-  config = yamldecode(file("${path.module}/../../variables.yaml"))
-
-  # Safely extract capacities and workspaces maps, defaulting to empty maps if not found
-  workspaces = try(local.config.workspaces, {})
+  # Instead of parsing a YAML file, use the workspaces variable provided via tfvars
+  workspaces = var.workspaces
 }
 
 # Example workspace resource configuration
