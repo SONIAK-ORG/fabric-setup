@@ -1,6 +1,6 @@
 steps:
   - task: AzureCLI@2
-    displayName: Terraform Plan for ${{ coalesce(parameters.terraform_action, 'Apply') }}
+    displayName: Terraform Plan
     inputs:
       azureSubscription: ${{ parameters.serviceConnection }}
       scriptType: pscore
@@ -28,6 +28,9 @@ steps:
         $arguments += "plan"
         $arguments += "-out=tfplan"
         $arguments += "-input=false"
+
+        # If you have a tfvars file, add the -var-file argument:
+        $arguments += "-var-file=../../terraform.tfvars"  # <-- Adjust path as needed
 
         if ($env:TERRAFORM_ACTION -eq 'destroy') {
           $arguments += "-destroy"
