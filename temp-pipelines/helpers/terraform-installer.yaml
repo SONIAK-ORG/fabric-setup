@@ -12,6 +12,11 @@ steps:
         $TF_VERSION = (Invoke-WebRequest -Uri "https://checkpoint-api.hashicorp.com/v1/check/terraform").Content | ConvertFrom-Json | Select -ExpandProperty current_version
       }
 
+      # Strip the "v" prefix if present
+      if ($TF_VERSION.StartsWith("v")) {
+        $TF_VERSION = $TF_VERSION.Substring(1)
+      }
+
       $commandDetails = Get-Command -Name terraform -ErrorAction SilentlyContinue
       if($commandDetails) {
         Write-Host "Terraform already installed in $($commandDetails.Path), checking version"
@@ -114,7 +119,4 @@ steps:
       TF_VERSION: ${{ parameters.terraformVersion }}
       TOOLS_PATH: $(Agent.ToolsDirectory)
       FABRIC_OIDC_REQUEST_TOKEN: $(System.AccessToken)
-      FABRIC_AZURE_DEVOPS_SERVICE_CONNECTION_ID: "0941a35e-bfc3-4677-80d7-31f3ff4d5ed1"
       FABRIC_USE_OIDC: true
-      FABRIC_TENANT_ID: e501af00-804e-46a3-b6f9-0b17ccc75fbb
-      FABRIC_CLIENT_ID: 5c3a3a4f-88fc-4520-9245-d5b2f9f20a7d
