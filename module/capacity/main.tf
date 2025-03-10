@@ -11,15 +11,16 @@ terraform {
   }
 
   backend "azurerm" {
+    subscription_id = "903df39b-753b-4215-bad5-d8fbf346b48a"
     use_oidc = true
   }
 }
 
 provider "azurerm" {
-  features        = {}
+  features         {}
   use_oidc        = true
   use_cli         = false
-  subscription_id = "229f8a90-d75b-41db-ae79-90cdc72a0d11"
+
 }
 
 provider "azapi" {
@@ -29,8 +30,8 @@ provider "azapi" {
 
 locals {
   default_admin_members = []
+
   capacities = var.capacities
-  workspaces = var.workspaces
 }
 
 data "azurerm_resource_group" "fab" {
