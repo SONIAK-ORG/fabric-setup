@@ -14,7 +14,9 @@ terraform {
     }
   }
 
-  backend "azurerm" {}
+  backend "azurerm" {
+   subscription_id = "903df39b-753b-4215-bad5-d8fbf346b48a"
+  }
 }
 
 # AzureRM provider for authentication
@@ -23,7 +25,6 @@ provider "azurerm" {
 
   use_oidc        = true
   use_cli         = false
-  subscription_id = "229f8a90-d75b-41db-ae79-90cdc72a0d11"
 }
 
 # Microsoft Fabric provider configuration using OIDC authentication
@@ -47,4 +48,3 @@ resource "fabric_workspace" "this" {
   for_each    = local.workspaces
   display_name = each.value.display_name
   capacity_id  = data.fabric_capacity.fabric[each.key].id
-}
