@@ -15,7 +15,7 @@ terraform {
   }
 
   backend "azurerm" {
-   subscription_id = "903df39b-753b-4215-bad5-d8fbf346b48a"
+   subscription_id = ""
   }
 }
 
